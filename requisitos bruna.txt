@@ -1,0 +1,15 @@
+-ler a tabela do excel e guardar tudo em 3 tabelas: ALUNO, UNIVERSIDADE e CURSO
+   - https://www.baeldung.com/java-read-dates-excel
+   - https://www.bezkoder.com/spring-boot-upload-excel-file-database/
+   - https://www.callicoder.com/java-read-excel-file-apache-poi/
+
+-mapear as tabelas na JPA
+
+
+-criar endpoint para expor um aluno, sua média, sua universidade e seu curso, em ordem decrescente por nota (maiores notas primeiro)
+
+
+-criar um endpoint para buscar todos os alunos, filtragem por UNIVERSIDADE e CURSO.
+
+
+-testar os últimos 2 requisitos com framework a escolha, de ponta-a-ponta (começando do controller)
