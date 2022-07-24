@@ -1,6 +1,7 @@
 package com.brunadelmouro.challengespring.controllers;
 
 import com.brunadelmouro.challengespring.service.AlunoService;
+import com.brunadelmouro.challengespring.service.BaseService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -13,7 +14,7 @@ import java.util.List;
 @RequestMapping(path = "/transactions")
 public class AlunoController {
 
-    private AlunoService alunoService;
+    private final AlunoService alunoService;
 
     public AlunoController(final AlunoService alunoService) {
         this.alunoService = alunoService;

@@ -3,13 +3,11 @@ package com.brunadelmouro.challengespring.service.impl;
 import com.brunadelmouro.challengespring.models.Aluno;
 import com.brunadelmouro.challengespring.repositories.AlunoRepository;
 import com.brunadelmouro.challengespring.service.AlunoService;
-import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -32,7 +30,6 @@ public class AlunoServiceImpl implements AlunoService {
 
     @Override
     public void importSheetToDatabase(final List<MultipartFile> multipartfiles) {
-        boolean isFirstRow = true;
 
         if (!multipartfiles.isEmpty()) {
             List<Aluno> transactions = new ArrayList<>();
@@ -72,28 +69,6 @@ public class AlunoServiceImpl implements AlunoService {
                 alunoRepository.saveAll(transactions);
             }
         }
-    }
-
-    private Object getValue(Cell cell) {
-        switch (cell.getCellType()) {
-            case STRING:
-                return cell.getStringCellValue();
-            case NUMERIC:
-                return String.valueOf((int) cell.getNumericCellValue());
-            case BOOLEAN:
-                return cell.getBooleanCellValue();
-            case ERROR:
-                return cell.getErrorCellValue();
-            case FORMULA:
-                return cell.getCellFormula();
-            case BLANK:
-                return null;
-            case _NONE:
-                return null;
-            default:
-                break;
-        }
-        return null;
     }
 
     public static int getNumberOfNonEmptyCells(XSSFSheet sheet, int columnIndex) {
