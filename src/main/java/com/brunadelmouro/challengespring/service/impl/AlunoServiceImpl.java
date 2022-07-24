@@ -1,7 +1,9 @@
 package com.brunadelmouro.challengespring.service.impl;
 
 import com.brunadelmouro.challengespring.models.Aluno;
+import com.brunadelmouro.challengespring.models.Curso;
 import com.brunadelmouro.challengespring.repositories.AlunoRepository;
+import com.brunadelmouro.challengespring.repositories.CursoRepository;
 import com.brunadelmouro.challengespring.service.AlunoService;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.xssf.usermodel.XSSFCell;
@@ -24,15 +26,17 @@ public class AlunoServiceImpl implements AlunoService {
 
     AlunoRepository alunoRepository;
 
-    public AlunoServiceImpl(final AlunoRepository alunoRepository) {
+    CursoRepository cursoRepository;
+
+    public AlunoServiceImpl(final AlunoRepository alunoRepository, final CursoRepository cursoRepository) {
         this.alunoRepository = alunoRepository;
+        this.cursoRepository = cursoRepository;
     }
 
     @Override
     public void importSheetToDatabase(final List<MultipartFile> multipartfiles) {
 
         if (!multipartfiles.isEmpty()) {
-            List<Aluno> transactions = new ArrayList<>();
 
             multipartfiles.forEach(multipartfile -> {
                 try {
@@ -51,11 +55,18 @@ public class AlunoServiceImpl implements AlunoService {
                         Double nota1 = row.getCell(3).getNumericCellValue();
                         Double nota2 = row.getCell(4).getNumericCellValue();
                         Double nota3 = row.getCell(5).getNumericCellValue();
+                        String cursoSigla = row.getCell(7).getStringCellValue();
 
                         Date dataMatriculaDate = new SimpleDateFormat("dd/MM/yyyy").parse(dataMatriculaString);
 
                         Aluno transaction = new Aluno(null, matricula, dataMatriculaDate, nome, nota1, nota2, nota3);
-                        transactions.add(transaction);
+
+                        Curso cursoEncontrado = cursoRepository.findBySigla(cursoSigla);
+
+                        addCourseToStudents(cursoEncontrado, transaction);
+
+                        alunoRepository.save(transaction);
+                        cursoRepository.save(cursoEncontrado);
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -63,12 +74,12 @@ public class AlunoServiceImpl implements AlunoService {
                     throw new RuntimeException(e);
                 }
             });
-
-            if (!transactions.isEmpty()) {
-                // save to database
-                alunoRepository.saveAll(transactions);
-            }
         }
+    }
+
+    public static void addCourseToStudents(Curso cursoEncontrado, Aluno transaction){
+        cursoEncontrado.getAlunos().add(transaction);
+        transaction.setCurso(cursoEncontrado);
     }
 
     public static int getNumberOfNonEmptyCells(XSSFSheet sheet, int columnIndex) {

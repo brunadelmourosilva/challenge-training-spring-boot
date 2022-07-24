@@ -53,6 +53,14 @@ public class Universidade {
         this.sigla = sigla;
     }
 
+    public List<Curso> getCursos() {
+        return cursos;
+    }
+
+    public void setCursos(final List<Curso> cursos) {
+        this.cursos = cursos;
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) return true;

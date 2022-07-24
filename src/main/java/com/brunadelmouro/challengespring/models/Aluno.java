@@ -90,6 +90,14 @@ public class Aluno {
         this.nota3 = nota3;
     }
 
+    public Curso getCurso() {
+        return curso;
+    }
+
+    public void setCurso(final Curso curso) {
+        this.curso = curso;
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) return true;
