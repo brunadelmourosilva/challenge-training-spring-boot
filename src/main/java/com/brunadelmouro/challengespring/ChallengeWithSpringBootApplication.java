@@ -1,7 +1,9 @@
 package com.brunadelmouro.challengespring;
 
 import com.brunadelmouro.challengespring.models.Curso;
+import com.brunadelmouro.challengespring.models.Universidade;
 import com.brunadelmouro.challengespring.repositories.CursoRepository;
+import com.brunadelmouro.challengespring.repositories.UniversidadeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -21,6 +23,9 @@ public class ChallengeWithSpringBootApplication implements CommandLineRunner {
 	@Autowired
 	CursoRepository cursoRepository;
 
+	@Autowired
+	UniversidadeRepository universidadeRepository;
+
 	@Override
 	public void run(final String... args) throws Exception {
 
@@ -31,5 +36,11 @@ public class ChallengeWithSpringBootApplication implements CommandLineRunner {
 		//TODO relacionamento com as tabelas
 
 		cursoRepository.saveAll(Arrays.asList(curso1, curso2, curso3));
+
+		Universidade universidade1 = new Universidade(null, "Instituto Federal do Sul de Minas Gerais", "IFSULDEMINAS");
+		Universidade universidade2 = new Universidade(null, "Universidade Federal de Itajubá", "UNIFEI");
+		Universidade universidade3 = new Universidade(null, "Fundação de Ensino e Pesquisa de Itajubá", "FEPI");
+
+		universidadeRepository.saveAll(Arrays.asList(universidade1, universidade2, universidade3));
 	}
 }
