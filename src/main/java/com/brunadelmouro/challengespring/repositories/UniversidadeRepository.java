@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface UniversidadeRepository extends JpaRepository<Universidade, Integer> {
+    Universidade findBySigla(String sigla);
 }

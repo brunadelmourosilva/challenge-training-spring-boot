@@ -1,5 +1,7 @@
 package com.brunadelmouro.challengespring.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +21,9 @@ public class Universidade {
                 joinColumns = @JoinColumn(name = "universidade_id"), //lado dominante
                 inverseJoinColumns = @JoinColumn(name = "curso_id")) //lado domidado
     private List<Curso> cursos = new ArrayList<>();
+
+    @OneToMany(mappedBy = "universidade")
+    private List<Aluno> alunos = new ArrayList<>();
 
     public Universidade() {
     }
@@ -59,6 +64,14 @@ public class Universidade {
 
     public void setCursos(final List<Curso> cursos) {
         this.cursos = cursos;
+    }
+
+    public List<Aluno> getAlunos() {
+        return alunos;
+    }
+
+    public void setAlunos(final List<Aluno> alunos) {
+        this.alunos = alunos;
     }
 
     @Override

@@ -1,5 +1,7 @@
 package com.brunadelmouro.challengespring.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.Date;
 import java.util.Objects;
@@ -20,6 +22,10 @@ public class Aluno {
     @ManyToOne
     @JoinColumn(name = "curso_id", referencedColumnName = "cursoId") //foreign key
     private Curso curso;
+
+    @ManyToOne
+    @JoinColumn(name = "universidade_id")
+    private Universidade universidade;
 
     public Aluno() {
     }
@@ -96,6 +102,14 @@ public class Aluno {
 
     public void setCurso(final Curso curso) {
         this.curso = curso;
+    }
+
+    public Universidade getUniversidade() {
+        return universidade;
+    }
+
+    public void setUniversidade(final Universidade universidade) {
+        this.universidade = universidade;
     }
 
     @Override
