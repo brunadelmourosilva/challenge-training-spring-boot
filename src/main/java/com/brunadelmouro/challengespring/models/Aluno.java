@@ -19,6 +19,8 @@ public class Aluno {
     private Double nota2;
     private Double nota3;
 
+    private Double media;
+
     @ManyToOne
     @JoinColumn(name = "curso_id", referencedColumnName = "cursoId") //foreign key
     private Curso curso;
@@ -110,6 +112,14 @@ public class Aluno {
 
     public void setUniversidade(final Universidade universidade) {
         this.universidade = universidade;
+    }
+
+    public Double getMedia() {
+        return media;
+    }
+
+    public void setMedia(final Double media) {
+        this.media = media;
     }
 
     @Override

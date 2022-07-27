@@ -1,5 +1,8 @@
 package com.brunadelmouro.challengespring.service.impl;
 
+import com.brunadelmouro.challengespring.dto.AlunoResponseDTO;
+import com.brunadelmouro.challengespring.dto.PageResponse;
+import com.brunadelmouro.challengespring.mappers.AlunoMapper;
 import com.brunadelmouro.challengespring.models.Aluno;
 import com.brunadelmouro.challengespring.models.Curso;
 import com.brunadelmouro.challengespring.models.Universidade;
@@ -13,6 +16,11 @@ import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.hibernate.ObjectNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,10 +28,10 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class AlunoServiceImpl implements AlunoService {
@@ -34,6 +42,9 @@ public class AlunoServiceImpl implements AlunoService {
 
     UniversidadeRepository universidadeRepository;
 
+    @Autowired
+    AlunoMapper alunoMapper;
+
     public AlunoServiceImpl(final AlunoRepository alunoRepository, final CursoRepository cursoRepository, final UniversidadeRepository universidadeRepository) {
         this.alunoRepository = alunoRepository;
         this.cursoRepository = cursoRepository;
@@ -42,7 +53,7 @@ public class AlunoServiceImpl implements AlunoService {
 
     @Override
     public void importSheetToDatabase(final List<MultipartFile> multipartfiles) {
-
+        //TODO add logs
         if (!multipartfiles.isEmpty()) {
 
             multipartfiles.forEach(multipartfile -> {
@@ -68,6 +79,8 @@ public class AlunoServiceImpl implements AlunoService {
                         Date dataMatriculaDate = new SimpleDateFormat("dd/MM/yyyy").parse(dataMatriculaString);
 
                         Aluno transaction = new Aluno(null, matricula, dataMatriculaDate, nome, nota1, nota2, nota3);
+
+                        transaction.setMedia((transaction.getNota1() + transaction.getNota2() + transaction.getNota3()) / 3);
 
                         //----------------------------------------------------------------
 
@@ -121,5 +134,35 @@ public class AlunoServiceImpl implements AlunoService {
 
         return alunoEncontrado.orElseThrow(() -> new ObjectNotFoundException(1, "Object not found"));
     }
+
+    @Override
+    public PageResponse getAllStudents(final int pageNo, final int pageSize, final String sortBy, final String sortDir) {
+        //set a condition if return a desc type or asc type on sort variable
+        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending(); //if ? return thing : return other thing
+
+        //set page and pageable
+        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+        Page<Aluno> alunosPage = alunoRepository.findAll(pageable);
+
+        //get content for page object
+        List<Aluno> listaDeAlunos = alunosPage.getContent();
+
+        //convert each domain type to dto type
+        List<AlunoResponseDTO> content =
+                listaDeAlunos.stream().map(aluno -> alunoMapper.domainToResponseDTO(aluno)).collect(Collectors.toList());
+
+        PageResponse pageResponse = new PageResponse();
+        pageResponse.setContent(content);
+        pageResponse.setPageNo(alunosPage.getNumber());
+        pageResponse.setPageSize(alunosPage.getSize());
+        pageResponse.setTotalElements(alunosPage.getTotalElements());
+        pageResponse.setTotalPages(alunosPage.getTotalPages());
+        pageResponse.setLast(alunosPage.isLast());
+
+        return pageResponse;
+    }
+//https://www.javaguides.net/2021/10/spring-boot-pagination-and-sorting-rest-api.html
+
 }
 
