@@ -1,9 +1,5 @@
 package com.brunadelmouro.challengespring.dto;
 
-import com.brunadelmouro.challengespring.models.Curso;
-import com.brunadelmouro.challengespring.models.Universidade;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 public class AlunoResponseDTO {
 
     private String nome;
