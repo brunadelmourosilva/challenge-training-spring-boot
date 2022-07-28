@@ -1,9 +1,21 @@
 package com.brunadelmouro.challengespring.repositories;
 
 import com.brunadelmouro.challengespring.models.Aluno;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface AlunoRepository extends JpaRepository<Aluno, Integer> {
+
+    //Page<Aluno> findAllByDataMatriculaBetween(Date data1, Date data2, Pageable pageable);
+
+    //Page<Aluno> findAllByCursoAndUniversidade()
+
+    //using JPQL
+    @Query("FROM Aluno a WHERE a.curso.id = :cursoId AND a.universidade.id = :universidadeId")
+    Page<Aluno> findAllBy(@Param("cursoId") Integer cursoId, @Param("universidadeId") Integer universidadeId, Pageable pageable);
 }

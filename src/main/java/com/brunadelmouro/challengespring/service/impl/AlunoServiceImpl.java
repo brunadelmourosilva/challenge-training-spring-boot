@@ -10,6 +10,7 @@ import com.brunadelmouro.challengespring.repositories.AlunoRepository;
 import com.brunadelmouro.challengespring.repositories.CursoRepository;
 import com.brunadelmouro.challengespring.repositories.UniversidadeRepository;
 import com.brunadelmouro.challengespring.service.AlunoService;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
@@ -34,6 +35,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class AlunoServiceImpl implements AlunoService {
 
     AlunoRepository alunoRepository;
@@ -91,8 +93,13 @@ public class AlunoServiceImpl implements AlunoService {
                         addUniversityToStudents(universidadeEncontrada, transaction);
 
                         alunoRepository.save(transaction);
+                        log.info("Aluno {} saved on database", transaction.getNome());
+
                         cursoRepository.save(cursoEncontrado); //update
+                        log.info("Curso {} updated on database", cursoEncontrado.getNome());
+
                         universidadeRepository.save(universidadeEncontrada); //update
+                        log.info("Universidade {} updated on database", universidadeEncontrada.getNome());
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -103,12 +110,12 @@ public class AlunoServiceImpl implements AlunoService {
         }
     }
 
-    public static void addCourseToStudents(Curso cursoEncontrado, Aluno transaction){
+    public static void addCourseToStudents(Curso cursoEncontrado, Aluno transaction) {
         cursoEncontrado.getAlunos().add(transaction);
         transaction.setCurso(cursoEncontrado);
     }
 
-    public static void addUniversityToStudents(Universidade universidadeEncontrada, Aluno transaction){
+    public static void addUniversityToStudents(Universidade universidadeEncontrada, Aluno transaction) {
         universidadeEncontrada.getAlunos().add(transaction);
         transaction.setUniversidade(universidadeEncontrada);
     }
@@ -129,8 +136,8 @@ public class AlunoServiceImpl implements AlunoService {
 
     @Override
     public Aluno getStudentById(final Integer id) {
-        //TODO ADD logs
         Optional<Aluno> alunoEncontrado = alunoRepository.findById(id);
+        log.info("Aluno found");
 
         return alunoEncontrado.orElseThrow(() -> new ObjectNotFoundException(1, "Object not found"));
     }
@@ -164,5 +171,24 @@ public class AlunoServiceImpl implements AlunoService {
     }
 //https://www.javaguides.net/2021/10/spring-boot-pagination-and-sorting-rest-api.html
 
-}
+    @Override
+    public Page<AlunoResponseDTO> getStudentsByCursoAndUniversidadeFilter(Integer cursoId, Integer universidadeId, int pageNo, int pageSize, String sortBy, String sortDir) {
 
+        Page<Aluno> alunosFiltrados = null;
+        if (cursoId != null && universidadeId != null) {
+            alunosFiltrados =  alunoRepository.findAllBy(
+                                    cursoId,
+                                    universidadeId,
+                                    PageRequest.of(
+                                            pageNo,
+                                            pageSize,
+                                            Sort.by(
+                                                    sortDir.equals("ASC") ? Sort.Direction.ASC : Sort.Direction.DESC, sortBy)));
+        }
+
+        //convert Aluno to ALunoResponseDTO
+        return alunosFiltrados.map(alunoMapper::domainToResponseDTO);
+    }
+
+}
+//https://stackoverflow.com/questions/39036771/how-to-map-pageobjectentity-to-pageobjectdto-in-spring-data-rest

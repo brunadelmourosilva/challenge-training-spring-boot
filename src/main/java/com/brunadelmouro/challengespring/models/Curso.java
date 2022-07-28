@@ -8,13 +8,18 @@ import java.util.List;
 import java.util.Objects;
 
 @Entity
+@Table(name = "CURSO")
 public class Curso {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "cursoId")
+    @Column(name = "CURSO_ID")
     private Integer id;
+
+    @Column(name = "NOME")
     private String nome;
+
+    @Column(name = "SIGLA")
     private String sigla;
 
     @OneToMany(mappedBy = "curso") //refêrencia com o campo curso na tabela de aluno

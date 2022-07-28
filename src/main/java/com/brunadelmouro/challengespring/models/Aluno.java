@@ -1,32 +1,47 @@
 package com.brunadelmouro.challengespring.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.util.Date;
 import java.util.Objects;
 
 @Entity
+@Table(name = "ALUNO")
 public class Aluno {
 
+    @Column(name = "ALUNO_ID")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
+    @Column(name = "MATRICULA")
     private String matricula;
+
+    @Column(name = "DATA_MATRICULA")
     private Date dataMatricula;
+
+    @Column(name = "NOME")
     private String nome;
+
+    @Column(name = "NOTA_1")
     private Double nota1;
+
+    @Column(name = "NOTA_2")
     private Double nota2;
+
+    @Column(name = "NOTA_3")
     private Double nota3;
 
+    @Column(name = "MEDIA")
     private Double media;
 
+
     @ManyToOne
-    @JoinColumn(name = "curso_id", referencedColumnName = "cursoId") //foreign key
+    @JoinColumn(name = "RF_CURSO", referencedColumnName = "CURSO_ID") //foreign key
     private Curso curso;
 
     @ManyToOne
-    @JoinColumn(name = "universidade_id")
+    @JoinColumn(name = "RF_UNIVERSIDADE")
     private Universidade universidade;
 
     public Aluno() {

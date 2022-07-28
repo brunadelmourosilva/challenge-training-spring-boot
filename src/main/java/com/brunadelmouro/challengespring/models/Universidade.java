@@ -1,6 +1,6 @@
 package com.brunadelmouro.challengespring.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -8,18 +8,23 @@ import java.util.List;
 import java.util.Objects;
 
 @Entity
+@Table(name = "UNIVERSIDADE")
 public class Universidade {
 
+    @Column(name = "UNIVERSIDADE_ID")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+    @Column(name = "NOME")
     private String nome;
+
+    @Column(name = "SIGLA")
     private String sigla;
 
     @ManyToMany
     @JoinTable(name = "UNIVERSIDADE_HAS_CURSO",
-                joinColumns = @JoinColumn(name = "universidade_id"), //lado dominante
-                inverseJoinColumns = @JoinColumn(name = "curso_id")) //lado domidado
+                joinColumns = @JoinColumn(name = "UNIVERSIDADE_ID"), //lado dominante
+                inverseJoinColumns = @JoinColumn(name = "CURSO_ID")) //lado domidado
     private List<Curso> cursos = new ArrayList<>();
 
     @OneToMany(mappedBy = "universidade")
