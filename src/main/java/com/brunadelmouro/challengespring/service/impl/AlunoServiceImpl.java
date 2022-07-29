@@ -25,7 +25,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-
+import org.apache.commons.math3.util.Precision;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -55,7 +55,6 @@ public class AlunoServiceImpl implements AlunoService {
 
     @Override
     public void importSheetToDatabase(final List<MultipartFile> multipartfiles) {
-        //TODO add logs
         if (!multipartfiles.isEmpty()) {
 
             multipartfiles.forEach(multipartfile -> {
@@ -82,7 +81,12 @@ public class AlunoServiceImpl implements AlunoService {
 
                         Aluno transaction = new Aluno(null, matricula, dataMatriculaDate, nome, nota1, nota2, nota3);
 
-                        transaction.setMedia((transaction.getNota1() + transaction.getNota2() + transaction.getNota3()) / 3);
+                        Double middle = Precision.round(
+                                                        (transaction.getNota1() +
+                                                            transaction.getNota2() +
+                                                            transaction.getNota3()) / 3,
+                                                            2);
+                        transaction.setMedia(middle);
 
                         //----------------------------------------------------------------
 
@@ -175,7 +179,7 @@ public class AlunoServiceImpl implements AlunoService {
     public Page<AlunoResponseDTO> getStudentsByCursoAndUniversidadeFilter(Integer cursoId, Integer universidadeId, int pageNo, int pageSize, String sortBy, String sortDir) {
 
         Page<Aluno> alunosFiltrados = null;
-        if (cursoId != null && universidadeId != null) {
+        if (cursoId != null || universidadeId != null) {
             alunosFiltrados =  alunoRepository.findAllBy(
                                     cursoId,
                                     universidadeId,

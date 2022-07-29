@@ -72,7 +72,7 @@ public class AlunoController {
             @RequestParam(value = "cursoId", required = false) Integer cursoId,
             @RequestParam(value = "universidadeId", required = false) Integer universidadeId
     ){
-        log.info("/alunos -> {}, {}, {}, {}", pageNo, pageSize, sortBy, sortDir);
+        log.info("/alunos -> {}, {}, {}, {}, {}, {}", pageNo, pageSize, sortBy, sortDir, cursoId, universidadeId);
 
         return alunoService.getStudentsByCursoAndUniversidadeFilter(cursoId, universidadeId, pageNo, pageSize, sortBy, sortDir);
     }
