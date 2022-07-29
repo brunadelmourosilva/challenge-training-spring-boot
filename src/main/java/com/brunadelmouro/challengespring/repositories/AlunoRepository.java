@@ -15,6 +15,4 @@ public interface AlunoRepository extends JpaRepository<Aluno, Integer> {
             "(:cursoId = NULL) AND (a.universidade.id = :universidadeId) OR" +
             "(:universidadeId = NULL) AND (a.curso.id = :cursoId)")
     Page<Aluno> findAllBy(@Param("cursoId") Integer cursoId, @Param("universidadeId") Integer universidadeId, Pageable pageable);
-
-    //@Query("FROM Aluno a WHERE a.curso.id = :cursoId OR ")
 }

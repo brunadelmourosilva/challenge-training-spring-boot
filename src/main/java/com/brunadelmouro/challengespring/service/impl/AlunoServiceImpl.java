@@ -1,7 +1,6 @@
 package com.brunadelmouro.challengespring.service.impl;
 
 import com.brunadelmouro.challengespring.dto.AlunoResponseDTO;
-import com.brunadelmouro.challengespring.dto.PageResponse;
 import com.brunadelmouro.challengespring.mappers.AlunoMapper;
 import com.brunadelmouro.challengespring.models.Aluno;
 import com.brunadelmouro.challengespring.models.Curso;
@@ -20,19 +19,18 @@ import org.hibernate.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import org.apache.commons.math3.util.Precision;
+
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -82,10 +80,10 @@ public class AlunoServiceImpl implements AlunoService {
                         Aluno transaction = new Aluno(null, matricula, dataMatriculaDate, nome, nota1, nota2, nota3);
 
                         Double middle = Precision.round(
-                                                        (transaction.getNota1() +
-                                                            transaction.getNota2() +
-                                                            transaction.getNota3()) / 3,
-                                                            2);
+                                (transaction.getNota1() +
+                                        transaction.getNota2() +
+                                        transaction.getNota3()) / 3,
+                                2);
                         transaction.setMedia(middle);
 
                         //----------------------------------------------------------------
@@ -147,47 +145,29 @@ public class AlunoServiceImpl implements AlunoService {
     }
 
     @Override
-    public PageResponse getAllStudents(final int pageNo, final int pageSize, final String sortBy, final String sortDir) {
-        //set a condition if return a desc type or asc type on sort variable
-        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending()
-                : Sort.by(sortBy).descending(); //if ? return thing : return other thing
-
-        //set page and pageable
-        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
-        Page<Aluno> alunosPage = alunoRepository.findAll(pageable);
-
-        //get content for page object
-        List<Aluno> listaDeAlunos = alunosPage.getContent();
-
-        //convert each domain type to dto type
-        List<AlunoResponseDTO> content =
-                listaDeAlunos.stream().map(aluno -> alunoMapper.domainToResponseDTO(aluno)).collect(Collectors.toList());
-
-        PageResponse pageResponse = new PageResponse();
-        pageResponse.setContent(content);
-        pageResponse.setPageNo(alunosPage.getNumber());
-        pageResponse.setPageSize(alunosPage.getSize());
-        pageResponse.setTotalElements(alunosPage.getTotalElements());
-        pageResponse.setTotalPages(alunosPage.getTotalPages());
-        pageResponse.setLast(alunosPage.isLast());
-
-        return pageResponse;
-    }
-//https://www.javaguides.net/2021/10/spring-boot-pagination-and-sorting-rest-api.html
-
-    @Override
     public Page<AlunoResponseDTO> getStudentsByCursoAndUniversidadeFilter(Integer cursoId, Integer universidadeId, int pageNo, int pageSize, String sortBy, String sortDir) {
-
         Page<Aluno> alunosFiltrados = null;
+
+        //universidade e curso
         if (cursoId != null || universidadeId != null) {
-            alunosFiltrados =  alunoRepository.findAllBy(
-                                    cursoId,
-                                    universidadeId,
-                                    PageRequest.of(
-                                            pageNo,
-                                            pageSize,
-                                            Sort.by(
-                                                    sortDir.equals("ASC") ? Sort.Direction.ASC : Sort.Direction.DESC, sortBy)));
+            alunosFiltrados = alunoRepository.findAllBy(
+                    cursoId,
+                    universidadeId,
+                    PageRequest.of(
+                            pageNo,
+                            pageSize,
+                            Sort.by(
+                                    sortDir.equals("ASC") ? Sort.Direction.ASC : Sort.Direction.DESC, sortBy)));
+        }
+
+        //lista todos os alunos por ordem decrescente de nota
+        if (cursoId == null && universidadeId == null) {
+            alunosFiltrados = alunoRepository.findAll(
+                    PageRequest.of(
+                            pageNo,
+                            pageSize,
+                            Sort.by(
+                                    sortDir.equals("ASC") ? Sort.Direction.ASC : Sort.Direction.DESC, sortBy)));
         }
 
         //convert Aluno to ALunoResponseDTO
@@ -196,3 +176,4 @@ public class AlunoServiceImpl implements AlunoService {
 
 }
 //https://stackoverflow.com/questions/39036771/how-to-map-pageobjectentity-to-pageobjectdto-in-spring-data-rest
+//https://www.javaguides.net/2021/10/spring-boot-pagination-and-sorting-rest-api.html
