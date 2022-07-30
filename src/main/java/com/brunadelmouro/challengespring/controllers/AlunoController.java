@@ -4,7 +4,6 @@ import com.brunadelmouro.challengespring.dto.AlunoResponseDTO;
 import com.brunadelmouro.challengespring.helpers.Constants;
 import com.brunadelmouro.challengespring.mappers.AlunoMapper;
 import com.brunadelmouro.challengespring.models.Aluno;
-import com.brunadelmouro.challengespring.repositories.AlunoRepository;
 import com.brunadelmouro.challengespring.service.AlunoService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
