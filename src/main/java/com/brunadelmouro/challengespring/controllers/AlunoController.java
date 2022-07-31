@@ -14,14 +14,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
-
 @RestController
 @RequestMapping(path = "/alunos")
 @Slf4j
 public class AlunoController {
 
-    private static final String URL_ARQUIVO = "teste";
+    private static final String URL_ARQUIVO = "/home/bdelmouro/IdeaProjects/My Projects/challenge-training-spring-boot/";
     private final AlunoService alunoService;
     private final JobRepository jobRepository;
     private final AlunoMapper alunoMapper;
@@ -41,14 +39,7 @@ public class AlunoController {
                 URL_ARQUIVO,
                 Status.AGUARDANDO_PROCESSAMENTO);
 
-        //TODO chamar o salva arquivo
         jobRepository.save(job);
-
-        //em jobservice procura o arquivo com status de processamento
-        //chama o import... do aluno
-        //processa o arquivo
-
-        //alunoService.importSheetToDatabase(file);
 
         log.info("/alunos/import-to-db -> sheet imported");
 

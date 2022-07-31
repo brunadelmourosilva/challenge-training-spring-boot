@@ -1,6 +1,5 @@
 package com.brunadelmouro.challengespring.service.impl;
 
-import com.brunadelmouro.challengespring.Status;
 import com.brunadelmouro.challengespring.dto.AlunoResponseDTO;
 import com.brunadelmouro.challengespring.mappers.AlunoMapper;
 import com.brunadelmouro.challengespring.models.Aluno;
@@ -23,10 +22,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import org.apache.commons.math3.util.Precision;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -52,9 +51,11 @@ public class AlunoServiceImpl implements AlunoService {
     }
 
     @Override
-    public void importSheetToDatabase(final MultipartFile multipartfile) {
+    public void importSheetToDatabase(final Job job) {
         try {
-            XSSFWorkbook workBook = new XSSFWorkbook(multipartfile.getInputStream());
+            FileInputStream excelInput = new FileInputStream(job.getUrlArquivo().concat(job.getNomeArquivo()));
+
+            XSSFWorkbook workBook = new XSSFWorkbook(excelInput);
 
             XSSFSheet sheet = workBook.getSheetAt(0);
             // looping through each row
