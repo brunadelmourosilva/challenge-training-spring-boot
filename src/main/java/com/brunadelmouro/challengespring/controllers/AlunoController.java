@@ -18,8 +18,6 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping(path = "/alunos")
 @Slf4j
 public class AlunoController {
-
-    private static final String URL_ARQUIVO = "/home/bdelmouro/IdeaProjects/My Projects/challenge-training-spring-boot/";
     private final AlunoService alunoService;
     private final JobRepository jobRepository;
     private final AlunoMapper alunoMapper;
@@ -36,7 +34,7 @@ public class AlunoController {
         //initial process
         final var job = new Job(null,
                 file.getOriginalFilename(),
-                URL_ARQUIVO,
+                Constants.URL_ARQUIVO,
                 Status.AGUARDANDO_PROCESSAMENTO);
 
         jobRepository.save(job);
