@@ -1,6 +1,6 @@
 package com.brunadelmouro.challengespring.repositories;
 
-import com.brunadelmouro.challengespring.Status;
+import com.brunadelmouro.challengespring.enums.Status;
 import com.brunadelmouro.challengespring.models.Job;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

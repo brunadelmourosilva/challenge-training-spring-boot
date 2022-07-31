@@ -1,6 +1,6 @@
 package com.brunadelmouro.challengespring.controllers;
 
-import com.brunadelmouro.challengespring.Status;
+import com.brunadelmouro.challengespring.enums.Status;
 import com.brunadelmouro.challengespring.dto.AlunoResponseDTO;
 import com.brunadelmouro.challengespring.helpers.Constants;
 import com.brunadelmouro.challengespring.mappers.AlunoMapper;

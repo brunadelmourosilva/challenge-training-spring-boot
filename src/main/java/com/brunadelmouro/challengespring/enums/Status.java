@@ -1,4 +1,4 @@
-package com.brunadelmouro.challengespring;
+package com.brunadelmouro.challengespring.enums;
 
 public enum Status {
     AGUARDANDO_PROCESSAMENTO, PROCESSADO

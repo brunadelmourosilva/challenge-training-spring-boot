@@ -1,6 +1,6 @@
 package com.brunadelmouro.challengespring.service.impl;
 
-import com.brunadelmouro.challengespring.Status;
+import com.brunadelmouro.challengespring.enums.Status;
 import com.brunadelmouro.challengespring.repositories.JobRepository;
 import com.brunadelmouro.challengespring.service.AlunoService;
 import com.brunadelmouro.challengespring.service.JobService;

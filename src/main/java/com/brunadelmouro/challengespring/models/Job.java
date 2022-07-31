@@ -1,6 +1,6 @@
 package com.brunadelmouro.challengespring.models;
 
-import com.brunadelmouro.challengespring.Status;
+import com.brunadelmouro.challengespring.enums.Status;
 
 import javax.persistence.*;
 
