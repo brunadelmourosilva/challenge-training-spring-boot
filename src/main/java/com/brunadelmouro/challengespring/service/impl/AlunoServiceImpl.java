@@ -1,9 +1,11 @@
 package com.brunadelmouro.challengespring.service.impl;
 
+import com.brunadelmouro.challengespring.Status;
 import com.brunadelmouro.challengespring.dto.AlunoResponseDTO;
 import com.brunadelmouro.challengespring.mappers.AlunoMapper;
 import com.brunadelmouro.challengespring.models.Aluno;
 import com.brunadelmouro.challengespring.models.Curso;
+import com.brunadelmouro.challengespring.models.Job;
 import com.brunadelmouro.challengespring.models.Universidade;
 import com.brunadelmouro.challengespring.repositories.AlunoRepository;
 import com.brunadelmouro.challengespring.repositories.CursoRepository;
@@ -29,19 +31,17 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 
 @Service
 @Slf4j
 public class AlunoServiceImpl implements AlunoService {
 
-    AlunoRepository alunoRepository;
+    private final AlunoRepository alunoRepository;
 
-    CursoRepository cursoRepository;
+    private final CursoRepository cursoRepository;
 
-    UniversidadeRepository universidadeRepository;
-
+    private final UniversidadeRepository universidadeRepository;
     @Autowired
     AlunoMapper alunoMapper;
 
@@ -52,63 +52,58 @@ public class AlunoServiceImpl implements AlunoService {
     }
 
     @Override
-    public void importSheetToDatabase(final List<MultipartFile> multipartfiles) {
-        if (!multipartfiles.isEmpty()) {
+    public void importSheetToDatabase(final MultipartFile multipartfile) {
+        try {
+            XSSFWorkbook workBook = new XSSFWorkbook(multipartfile.getInputStream());
 
-            multipartfiles.forEach(multipartfile -> {
-                try {
-                    XSSFWorkbook workBook = new XSSFWorkbook(multipartfile.getInputStream());
+            XSSFSheet sheet = workBook.getSheetAt(0);
+            // looping through each row
+            for (int rowIndex = 0; rowIndex <= getNumberOfNonEmptyCells(sheet, 0) - 1; rowIndex++) {
+                // current row
+                XSSFRow row = sheet.getRow(rowIndex);
+                // skip the first row because it is a header row
 
-                    XSSFSheet sheet = workBook.getSheetAt(0);
-                    // looping through each row
-                    for (int rowIndex = 0; rowIndex <= getNumberOfNonEmptyCells(sheet, 0) - 1; rowIndex++) {
-                        // current row
-                        XSSFRow row = sheet.getRow(rowIndex);
-                        // skip the first row because it is a header row
+                String matricula = row.getCell(0).getStringCellValue();
+                String dataMatriculaString = row.getCell(1).getStringCellValue();
+                String nome = row.getCell(2).getStringCellValue();
+                Double nota1 = row.getCell(3).getNumericCellValue();
+                Double nota2 = row.getCell(4).getNumericCellValue();
+                Double nota3 = row.getCell(5).getNumericCellValue();
+                String universidadeSigla = row.getCell(6).getStringCellValue();
+                String cursoSigla = row.getCell(7).getStringCellValue();
 
-                        String matricula = row.getCell(0).getStringCellValue();
-                        String dataMatriculaString = row.getCell(1).getStringCellValue();
-                        String nome = row.getCell(2).getStringCellValue();
-                        Double nota1 = row.getCell(3).getNumericCellValue();
-                        Double nota2 = row.getCell(4).getNumericCellValue();
-                        Double nota3 = row.getCell(5).getNumericCellValue();
-                        String universidadeSigla = row.getCell(6).getStringCellValue();
-                        String cursoSigla = row.getCell(7).getStringCellValue();
+                Date dataMatriculaDate = new SimpleDateFormat("dd/MM/yyyy").parse(dataMatriculaString);
 
-                        Date dataMatriculaDate = new SimpleDateFormat("dd/MM/yyyy").parse(dataMatriculaString);
+                Aluno transaction = new Aluno(null, matricula, dataMatriculaDate, nome, nota1, nota2, nota3);
 
-                        Aluno transaction = new Aluno(null, matricula, dataMatriculaDate, nome, nota1, nota2, nota3);
+                Double middle = Precision.round(
+                        (transaction.getNota1() +
+                                transaction.getNota2() +
+                                transaction.getNota3()) / 3,
+                        2);
+                transaction.setMedia(middle);
 
-                        Double middle = Precision.round(
-                                (transaction.getNota1() +
-                                        transaction.getNota2() +
-                                        transaction.getNota3()) / 3,
-                                2);
-                        transaction.setMedia(middle);
+                //----------------------------------------------------------------
 
-                        //----------------------------------------------------------------
+                Curso cursoEncontrado = cursoRepository.findBySigla(cursoSigla);
+                addCourseToStudents(cursoEncontrado, transaction);
 
-                        Curso cursoEncontrado = cursoRepository.findBySigla(cursoSigla);
-                        addCourseToStudents(cursoEncontrado, transaction);
+                Universidade universidadeEncontrada = universidadeRepository.findBySigla(universidadeSigla);
+                addUniversityToStudents(universidadeEncontrada, transaction);
 
-                        Universidade universidadeEncontrada = universidadeRepository.findBySigla(universidadeSigla);
-                        addUniversityToStudents(universidadeEncontrada, transaction);
+                alunoRepository.save(transaction);
+                log.info("Aluno {} saved on database", transaction.getNome());
 
-                        alunoRepository.save(transaction);
-                        log.info("Aluno {} saved on database", transaction.getNome());
+                cursoRepository.save(cursoEncontrado); //update
+                log.info("Curso {} updated on database", cursoEncontrado.getNome());
 
-                        cursoRepository.save(cursoEncontrado); //update
-                        log.info("Curso {} updated on database", cursoEncontrado.getNome());
-
-                        universidadeRepository.save(universidadeEncontrada); //update
-                        log.info("Universidade {} updated on database", universidadeEncontrada.getNome());
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (ParseException e) {
-                    throw new RuntimeException(e);
-                }
-            });
+                universidadeRepository.save(universidadeEncontrada); //update
+                log.info("Universidade {} updated on database", universidadeEncontrada.getNome());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
         }
     }
 

@@ -20,6 +20,7 @@ public class Job {
     private String urlArquivo;
 
     @Column(name = "STATUS")
+    @Enumerated(EnumType.STRING)
     private Status status;
 
     public Job() {

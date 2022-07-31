@@ -1,9 +1,12 @@
 package com.brunadelmouro.challengespring.controllers;
 
+import com.brunadelmouro.challengespring.Status;
 import com.brunadelmouro.challengespring.dto.AlunoResponseDTO;
 import com.brunadelmouro.challengespring.helpers.Constants;
 import com.brunadelmouro.challengespring.mappers.AlunoMapper;
 import com.brunadelmouro.challengespring.models.Aluno;
+import com.brunadelmouro.challengespring.models.Job;
+import com.brunadelmouro.challengespring.repositories.JobRepository;
 import com.brunadelmouro.challengespring.service.AlunoService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -18,18 +21,34 @@ import java.util.List;
 @Slf4j
 public class AlunoController {
 
+    private static final String URL_ARQUIVO = "teste";
     private final AlunoService alunoService;
-
+    private final JobRepository jobRepository;
     private final AlunoMapper alunoMapper;
 
-    public AlunoController(final AlunoService alunoService, final AlunoMapper alunoMapper) {
+    public AlunoController(final AlunoService alunoService, final JobRepository jobRepository, final AlunoMapper alunoMapper) {
         this.alunoService = alunoService;
+        this.jobRepository = jobRepository;
         this.alunoMapper = alunoMapper;
     }
 
     @PostMapping(path = "/import-to-db")
-    public ResponseEntity<String> importTransactionsFromExcelToDb(@RequestPart(required = true) List<MultipartFile> files) {
-        alunoService.importSheetToDatabase(files);
+    public ResponseEntity<String> importTransactionsFromExcelToDb(@RequestPart(required = true) MultipartFile file) {
+
+        //initial process
+        final var job = new Job(null,
+                file.getOriginalFilename(),
+                URL_ARQUIVO,
+                Status.AGUARDANDO_PROCESSAMENTO);
+
+        //TODO chamar o salva arquivo
+        jobRepository.save(job);
+
+        //em jobservice procura o arquivo com status de processamento
+        //chama o import... do aluno
+        //processa o arquivo
+
+        //alunoService.importSheetToDatabase(file);
 
         log.info("/alunos/import-to-db -> sheet imported");
 
@@ -37,7 +56,7 @@ public class AlunoController {
     }
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<AlunoResponseDTO> getStudentById(@PathVariable(value = "id") Integer id){
+    public ResponseEntity<AlunoResponseDTO> getStudentById(@PathVariable(value = "id") Integer id) {
         Aluno aluno = alunoService.getStudentById(id);
 
         log.info("/alunos/{}", id);
@@ -53,7 +72,7 @@ public class AlunoController {
             @RequestParam(value = "sortDir", defaultValue = Constants.DEFAULT_SORT_DIRECTION, required = false) String sortDir,
             @RequestParam(value = "cursoId", required = false) Integer cursoId,
             @RequestParam(value = "universidadeId", required = false) Integer universidadeId
-    ){
+    ) {
         log.info("/alunos -> {}, {}, {}, {}, {}, {}", pageNo, pageSize, sortBy, sortDir, cursoId, universidadeId);
 
         return alunoService.getStudentsByCursoAndUniversidadeFilter(cursoId, universidadeId, pageNo, pageSize, sortBy, sortDir);
