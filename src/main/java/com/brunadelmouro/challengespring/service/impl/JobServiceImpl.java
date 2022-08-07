@@ -5,6 +5,7 @@ import com.brunadelmouro.challengespring.repositories.JobRepository;
 import com.brunadelmouro.challengespring.service.AlunoService;
 import com.brunadelmouro.challengespring.service.JobService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,8 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 public class JobServiceImpl implements JobService {
 
-    JobRepository jobRepository;
-    AlunoService alunoService;
+    private final JobRepository jobRepository;
+    private final AlunoService alunoService;
 
     public JobServiceImpl(final JobRepository jobRepository, final AlunoService alunoService) {
         this.jobRepository = jobRepository;
@@ -35,7 +36,7 @@ public class JobServiceImpl implements JobService {
             arquivos.forEach(arquivo -> {
                     alunoService.importSheetToDatabase(arquivo);
                     arquivo.setStatus(Status.PROCESSADO);
-                    jobRepository.save(arquivo);
+                    arquivo = jobRepository.save(arquivo);
             });
             log.info("Processamento conluído");
         }

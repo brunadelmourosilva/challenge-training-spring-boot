@@ -41,13 +41,13 @@ public class AlunoServiceImpl implements AlunoService {
     private final CursoRepository cursoRepository;
 
     private final UniversidadeRepository universidadeRepository;
-    @Autowired
-    AlunoMapper alunoMapper;
+    private final AlunoMapper alunoMapper;
 
-    public AlunoServiceImpl(final AlunoRepository alunoRepository, final CursoRepository cursoRepository, final UniversidadeRepository universidadeRepository) {
+    public AlunoServiceImpl(final AlunoRepository alunoRepository, final CursoRepository cursoRepository, final UniversidadeRepository universidadeRepository, final AlunoMapper alunoMapper) {
         this.alunoRepository = alunoRepository;
         this.cursoRepository = cursoRepository;
         this.universidadeRepository = universidadeRepository;
+        this.alunoMapper = alunoMapper;
     }
 
     @Override
@@ -92,13 +92,13 @@ public class AlunoServiceImpl implements AlunoService {
                 Universidade universidadeEncontrada = universidadeRepository.findBySigla(universidadeSigla);
                 addUniversityToStudents(universidadeEncontrada, transaction);
 
-                alunoRepository.save(transaction);
+                transaction = alunoRepository.save(transaction);
                 log.info("Aluno {} saved on database", transaction.getNome());
 
-                cursoRepository.save(cursoEncontrado); //update
+                cursoEncontrado = cursoRepository.save(cursoEncontrado); //update
                 log.info("Curso {} updated on database", cursoEncontrado.getNome());
 
-                universidadeRepository.save(universidadeEncontrada); //update
+                universidadeEncontrada = universidadeRepository.save(universidadeEncontrada); //update
                 log.info("Universidade {} updated on database", universidadeEncontrada.getNome());
             }
         } catch (IOException e) {
