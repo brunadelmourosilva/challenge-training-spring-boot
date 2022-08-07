@@ -33,7 +33,7 @@ class JobServiceTest {
 
     @InjectMocks private JobServiceImpl jobService;
 
-    //resolver problema de NP, depois
+    //resolver problema de NPE, depois
     //se eu mockar isso, da certo, mas perde o sentido pois nao farei chamadas reais dentro no metodo deste service
     //ou posso mockar isso, testar a classe de job e depois
     //passo o metodo import... da classe alunoService para JobService

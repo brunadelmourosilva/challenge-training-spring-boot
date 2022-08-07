@@ -46,7 +46,7 @@ public class AlunoController {
 
     @GetMapping(value = "/{id}")
     public ResponseEntity<AlunoResponseDTO> getStudentById(@PathVariable(value = "id") Integer id) {
-        Aluno aluno = alunoService.getStudentById(id);
+        final var aluno = alunoService.getStudentById(id);
 
         log.info("/alunos/{}", id);
 
