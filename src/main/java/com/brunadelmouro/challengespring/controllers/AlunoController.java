@@ -4,7 +4,6 @@ import com.brunadelmouro.challengespring.enums.Status;
 import com.brunadelmouro.challengespring.dto.AlunoResponseDTO;
 import com.brunadelmouro.challengespring.helpers.Constants;
 import com.brunadelmouro.challengespring.mappers.AlunoMapper;
-import com.brunadelmouro.challengespring.models.Aluno;
 import com.brunadelmouro.challengespring.models.Job;
 import com.brunadelmouro.challengespring.repositories.JobRepository;
 import com.brunadelmouro.challengespring.service.AlunoService;
