@@ -10,14 +10,15 @@ import org.springframework.stereotype.Component;
 @Component
 public class AlunoMapper {
 
-    @Autowired
     ModelMapper modelMapper;
-
-    @Autowired
     CursoMapper cursoMapper;
-
-    @Autowired
     UniversidadeMapper universidadeMapper;
+
+    public AlunoMapper(final ModelMapper modelMapper, final CursoMapper cursoMapper, final UniversidadeMapper universidadeMapper) {
+        this.modelMapper = modelMapper;
+        this.cursoMapper = cursoMapper;
+        this.universidadeMapper = universidadeMapper;
+    }
 
     public AlunoResponseDTO domainToResponseDTO(Aluno aluno){
         TypeMap<Aluno, AlunoResponseDTO> typeMap = modelMapper.getTypeMap(Aluno.class, AlunoResponseDTO.class);
