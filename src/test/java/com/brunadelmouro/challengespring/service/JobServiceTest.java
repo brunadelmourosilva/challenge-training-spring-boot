@@ -19,24 +19,20 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Date;
 import java.util.List;
 
 import static org.mockito.BDDMockito.given;
 
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest
 class JobServiceTest {
 
     private static final String SIGLA_CURSO = "SIN";
     private static final String SIGLA_UNIVERSIDADE = "UNIFEI";
-
     @InjectMocks private JobServiceImpl jobService;
 
-    //resolver problema de NPE, depois
-    //se eu mockar isso, da certo, mas perde o sentido pois nao farei chamadas reais dentro no metodo deste service
-    //ou posso mockar isso, testar a classe de job e depois
-    //passo o metodo import... da classe alunoService para JobService
     @Autowired private AlunoServiceImpl alunoService;
 
     @Mock private AlunoRepository alunoRepository;
@@ -65,8 +61,8 @@ class JobServiceTest {
 
         aluno1 = new Aluno(1, "2021001809", dataMatriculaDate, "Bruna", 2.82, 4.89, 10.0);
 
-        jobService = new JobServiceImpl(jobRepository, alunoService);
         alunoService = new AlunoServiceImpl(alunoRepository, cursoRepository, universidadeRepository, alunoMapper);
+        jobService = new JobServiceImpl(jobRepository, alunoService);
     }
 
     @Test

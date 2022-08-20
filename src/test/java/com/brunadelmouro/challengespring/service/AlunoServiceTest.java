@@ -1,12 +1,7 @@
 package com.brunadelmouro.challengespring.service;
 
-import com.brunadelmouro.challengespring.dto.AlunoResponseDTO;
-import com.brunadelmouro.challengespring.helpers.Constants;
-import com.brunadelmouro.challengespring.mappers.AlunoMapper;
 import com.brunadelmouro.challengespring.models.Aluno;
 import com.brunadelmouro.challengespring.repositories.AlunoRepository;
-import com.brunadelmouro.challengespring.repositories.CursoRepository;
-import com.brunadelmouro.challengespring.repositories.UniversidadeRepository;
 import com.brunadelmouro.challengespring.service.impl.AlunoServiceImpl;
 import org.hibernate.ObjectNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
@@ -81,21 +76,5 @@ class AlunoServiceTest {
 
         //then
         then(alunoRepository).should().findById(anyInt());
-    }
-
-    @Test
-    void getStudentsByCursoAndUniversidadeFilterWhenCursoIdIsEqualToNull() {
-        //given
-        given(alunoRepository.findAllBy(isNull(), anyInt(), any(Pageable.class))).willReturn(alunosFiltradosPage);
-
-        //when - TODO parei aqui
-        Page<AlunoResponseDTO> response = alunoService.
-                getStudentsByCursoAndUniversidadeFilter(
-                        null,
-                        anyInt(),
-                        0,
-                        1,
-                        eq(Constants.DEFAULT_SORT_BY),
-                        eq("DESC"));
     }
 }
